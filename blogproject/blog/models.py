@@ -29,6 +29,15 @@ class Post(models.Model):
     category = models.ForeignKey(Category)
     tags = models.ManyToManyField(Tag, blank=True)
     author = models.ForeignKey(User)
+    #  文章阅读量
+    views = models.PositiveIntegerField(default=0)
+
+    def increase_views(self):
+        self.views += 1
+        self.save(update_fields=['views'])
+
+    class Meta:
+        ordering = ['-created_time', '-modified_time']
 
     def get_absolute_url(self):
         # 使用reverse函数，生成一个完整的url，例如post / 1
@@ -36,4 +45,6 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+
 

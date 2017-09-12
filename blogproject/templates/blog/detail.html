@@ -8,8 +8,8 @@
             <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
             <span class="post-date"><a href="#"><time class="entry-date" datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
             <span class="post-author"><a href="#">{{ post.author }}</a></span>
-            <span class="comments-link"><a href="#">4 评论</a></span>
-            <span class="views-count"><a href="#">588 阅读</a></span>
+            <span class="comments-link"><a href="{{post.get_absolute_url}}#comment-area">{{post.comment_set.count}} 评论</a></span>
+            <span class="views-count"><a href="#">{{post.views}} 阅读</a></span>
         </div>
     </header>
     <div class="entry-content clearfix">
@@ -19,7 +19,7 @@
 <section class="comment-area" id="comment-area">
     <hr>
     <h3>发表评论</h3>
-    <form action="{% url 'comments:comments' post.pk %}" method="post" class="comment-form">
+    <form action="{% url 'comment:comments' post.pk %}" method="post" class="comment-form">
         {% csrf_token %}
         {# cross site request forgery #}
         <div class="row">
@@ -51,7 +51,7 @@
         </div> <!-- row -->
     </form>
     <div class="comment-list-panel">
-        <h3>评论列表，共 <span>4</span> 条评论</h3>
+        <h3>评论列表，共 <span>{{post.comment_set.count}}</span> 条评论</h3>
         <ul class="comment-list list-unstyled">
             {% for comment in comment_list %}
             <li class="comment-item">
@@ -64,30 +64,6 @@
             {% empty %}
             无评论
             {% endfor %}
-            <li class="comment-item">
-                <span class="nickname">zmrenwu</span>
-                <time class="submit-date" datetime="2012-11-09T23:15:57+00:00">2017 年 3 月 11 日 23:56</time>
-                <div class="text">
-                    本能有可能会冲破格局，但格局有时候也会拘住本能。
-                </div>
-            </li>
-            <li class="comment-item">
-                <span class="nickname">蝙蝠侠</span>
-                <time class="submit-date" datetime="2012-11-09T23:15:57+00:00">2017 年 3 月 9 日 8:56</time>
-                <div class="text">
-                    其实真理一般是属于沉默的大多数的。那些偏激的观点
-                    只能吸引那些同样偏激的人。前几年琼瑶告于妈抄袭，大家都表示大快人心，说明吃
-                    瓜观众都只是就事论事，并不是对琼瑶有偏见。
-                </div>
-            </li>
-            <li class="comment-item">
-                <span class="nickname">长江七号</span>
-                <time class="submit-date" datetime="2012-11-09T23:15:57+00:00">2017 年 2 月 12 日 12:56</time>
-                <div class="text">
-                    观点我很喜欢！就是哎嘛本来一清二楚的，来个小三小
-                    四乱七八糟一团乱麻夹缠不清，简直麻烦要死
-                </div>
-            </li>
         </ul>
     </div>
 </section>
