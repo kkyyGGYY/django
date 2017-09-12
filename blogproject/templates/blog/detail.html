@@ -19,23 +19,33 @@
 <section class="comment-area" id="comment-area">
     <hr>
     <h3>发表评论</h3>
-    <form action="#" method="post" class="comment-form">
+    <form action="{% url 'comments:comments' post.pk %}" method="post" class="comment-form">
+        {% csrf_token %}
+        {# cross site request forgery #}
         <div class="row">
             <div class="col-md-4">
-                <label for="id_name">名字：</label>
-                <input type="text" id="id_name" name="name" required>
+                <label for="{{form.name.id_for_label}}">名字：</label>
+                <!--<input type="text" id="id_name" name="name" required>-->
+                {{form.name}}
+                {{form.name.error}}
             </div>
             <div class="col-md-4">
-                <label for="id_email">邮箱：</label>
-                <input type="email" id="id_email" name="email" required>
+                <label for="{{form.email.id_for_label}}">邮箱：</label>
+                <!--<input type="email" id="id_email" name="email" required>-->
+                {{form.email}}
+                {{form.email.error}}
             </div>
             <div class="col-md-4">
-                <label for="id_url">网址：</label>
-                <input type="text" id="id_url" name="url">
+                <label for="{{form.url.id_for_label}}">网址：</label>
+                <!--<input type="text" id="id_url" name="url">-->
+                {{form.url}}
+                {{form.url.error}}
             </div>
             <div class="col-md-12">
-                <label for="id_comment">评论：</label>
-                <textarea name="comment" id="id_comment" required></textarea>
+                <label for="{{form.text.id_for_label}}">评论：</label>
+                <!--<textarea name="comment" id="id_comment" required></textarea>-->
+                {{form.text}}
+                {{form.text.error}}
                 <button type="submit" class="comment-btn">发表</button>
             </div>
         </div> <!-- row -->
@@ -43,16 +53,17 @@
     <div class="comment-list-panel">
         <h3>评论列表，共 <span>4</span> 条评论</h3>
         <ul class="comment-list list-unstyled">
+            {% for comment in comment_list %}
             <li class="comment-item">
-                <span class="nickname">追梦人物</span>
-                <time class="submit-date" datetime="2012-11-09T23:15:57+00:00">2017 年 3 月 12 日 14:56</time>
+                <span class="nickname">{{comment.name}}</span>
+                <time class="submit-date" datetime="2012-11-09T23:15:57+00:00">{{comment.created_time}}</time>
                 <div class="text">
-                    文章观点又有道理又符合人性，这才是真正为了表达观
-                    点而写，不是为了迎合某某知名人士粉丝而写。我觉得如果琼瑶是前妻，生了三孩子
-                    后被一不知名的女人挖了墙角，我不信谁会说那个女人是追求真爱，说同情琼瑶骂小
-                    三的女人都是弱者。
+                    {{comment.text}}
                 </div>
             </li>
+            {% empty %}
+            无评论
+            {% endfor %}
             <li class="comment-item">
                 <span class="nickname">zmrenwu</span>
                 <time class="submit-date" datetime="2012-11-09T23:15:57+00:00">2017 年 3 月 11 日 23:56</time>
