@@ -1,0 +1,7 @@
+Django==1.10.6
+django-haystack==2.6.1
+jieba==0.39
+Markdown==2.6.9
+Pygments==2.2.0
+pytz==2017.2
+Whoosh==2.7.4
