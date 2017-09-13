@@ -4,8 +4,8 @@ from django.views.generic import ListView,DetailView
 from .models import Post, Category
 import markdown
 import pygments
-
 from comments.forms import CommentForm
+from django.core.paginator import Paginator, EmptyPage
 
 
 # def index(request):
@@ -18,6 +18,96 @@ class IndexView(ListView):
     model = Post
     template_name = 'blog/index.html'
     context_object_name = 'post_list'  # 这个post_list不能瞎取,必须和模板中的变量一样
+    paginate_by = 2
+
+    def paginator_data(self, paginator, page, is_paginated):
+        if not is_paginated:
+            return {}
+        # 首页
+        first = False
+
+        # 省略号
+        left_has_more = False
+
+        # 当前页左边的几个页码
+        left = []
+
+        # 当前页的页码
+        page_number = page.number
+
+        # 当前页右边的几个页码
+        right = []
+
+        # 省略号
+        right_has_more = False
+
+        # 最后一页
+        last = False
+
+        # 总页数
+        total_pages = paginator.num_pages
+
+        # 获取整个分页页码
+        page_range = paginator.page_range
+
+        #如果当前是第一页
+        if page_number == 1:
+            right = page_range[page_number:page_number+2]
+            if right[-1] < total_pages-1:
+                right_has_more = True
+            if right[-1] < total_pages:
+                last = True
+        elif page_number == total_pages:  # 如果当前是最后一页
+
+            # 用户请求的既不是最后一页，也不是第 1 页，则需要获取当前页左右两边的连续页码号，
+            # 这里只获取了当前页码前后连续两个页码，你可以更改这个数字以获取更多页码。
+            left = page_range[(page_number-3) if (page_number-3) > 0 else 0:page_number-1]
+            if left[0] > 2:
+                left_has_more = True
+
+            # 如果最左边的页码号比第 1 页的页码号大，说明当前页左边的连续页码号中不包含第一页的页码，
+            # 所以需要显示第一页的页码号，通过 first 来指示
+            if left[0] > 1:
+                first = True
+        else:
+            left = page_range[(page_number-3) if (page_number-3) > 0 else 0:page_number-1]
+            right = page_range[page_number:page_number + 2]
+            # 是否需要显示最后一页和最后一页前的省略号
+            if right[-1] < total_pages -1:
+                right_has_more = True
+            if right[-1] < total_pages:
+                last = True
+
+            # 是否需要显示第 1 页和第 1 页后的省略号
+            if left[0] > 2:
+                left_has_more = True
+            if left[0] > 1:
+                first = True
+
+        data = {
+            'left':left,
+            'right': right,
+            'left_has_more': left_has_more,
+            'right_has_more': right_has_more,
+            'first': first,
+            'last': last,
+        }
+        return data
+
+    def get_context_data(self, **kwargs):
+
+        context = super().get_context_data(**kwargs)
+        paginator = context.get('paginator')
+        page = context.get('page_obj')
+        is_paginated = context.get('is_paginated')
+
+        pagination_data = self.paginator_data(paginator, page, is_paginated)
+
+        context.update(pagination_data)
+        # 将更新后的 context 返回，以便 ListView 使用这个字典中的模板变量去渲染模板。
+        # 注意此时 context 字典中已有了显示分页导航条所需的数据。
+        return context
+
 
 
 # def detail(request, pk):

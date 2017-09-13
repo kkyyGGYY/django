@@ -5,6 +5,7 @@ from django.urls import reverse
 from markdown import Markdown
 from django.utils.html import strip_tags
 
+
 class Category(models.Model):
     name = models.CharField(max_length=64)
 
