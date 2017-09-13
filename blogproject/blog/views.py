@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.views.generic import ListView
 from .models import Post, Category
 import markdown
 import pygments
@@ -11,6 +12,12 @@ def index(request):
     post_list = Post.objects.all()
 
     return render(request, 'blog/index.html', context={'post_list': post_list})
+
+
+class IndexView(ListView):
+    model = Post
+    template_name = 'blog/index.html'
+    context_object_name = 'post_list'  # 这个name不能瞎取,必须和模板中的变量一样
 
 
 def detail(request, pk):
