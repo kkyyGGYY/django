@@ -35,8 +35,11 @@ class Post(models.Model):
     views = models.PositiveIntegerField(default=0)
 
     def increase_views(self):
+        print('-------------before save %d-------------' % self.views)
         self.views += 1
         self.save(update_fields=['views'])
+        print('-------------save %d-------------' % self.views)
+
 
     class Meta:
         ordering = ['-created_time', '-modified_time']
@@ -53,7 +56,8 @@ class Post(models.Model):
                                       'markdown.extensions.codehilite',
                                   ])
             self.excerpt = strip_tags(md.convert(self.body))[:32]
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return self.title

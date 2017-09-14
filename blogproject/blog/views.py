@@ -6,6 +6,8 @@ import markdown
 import pygments
 from comments.forms import CommentForm
 from django.core.paginator import Paginator, EmptyPage
+from django.utils.text import slugify
+from markdown.extensions.toc import TocExtension
 
 
 # def index(request):
@@ -129,6 +131,7 @@ class IndexView(ListView):
 #     }
 #     return render(request, 'blog/detail.html',context=context)
 
+
 class PostDetailView(DetailView):
     model = Post
     template_name = 'blog/detail.html'
@@ -136,17 +139,22 @@ class PostDetailView(DetailView):
 
     def get(self, request, *args,**kwargs):  # 每次请求就会直接调用get方法,所以点击量的写在get方法中比较合适
         # 复写基类的方法,一定要使用super来调用
-        response = super().get(request, *args,**kwargs)
+        response = super().get(request, *args, **kwargs)
         self.object.increase_views()  # objects 实际上是Post的对象
+        print('-------------end-------------')
         return response  # 复写基类的方法,该返回的必须要返回
+
 
     def get_object(self, queryset=None):
         post = super().get_object(queryset)
-        post.body = markdown.markdown(post.body, extensions=[
+        md = markdown.Markdown(extensions=[
             'markdown.extensions.extra',
             'markdown.extensions.codehilite',
-            'markdown.extensions.toc'
+            # 'markdown.extensions.toc',
+            TocExtension(slugify=slugify),
         ])
+        post.body = md.convert(post.body)
+        post.toc = md.toc
         return post
 
     def get_context_data(self, **kwargs):
@@ -224,7 +232,7 @@ class CategoryView(IndexView):
         return super().get_queryset().filter(category=cate)
 
 
-class TagView(ListView):
+class TagView(IndexView):
     def get_queryset(self):
         tag = get_object_or_404(Tag, pk=self.kwargs.get('pk'))
         return super().get_queryset().filter(tags=tag)
