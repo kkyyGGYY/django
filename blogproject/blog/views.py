@@ -8,6 +8,7 @@ from comments.forms import CommentForm
 from django.core.paginator import Paginator, EmptyPage
 from django.utils.text import slugify
 from markdown.extensions.toc import TocExtension
+from django.db.models import Q
 
 
 # def index(request):
@@ -236,3 +237,15 @@ class TagView(IndexView):
     def get_queryset(self):
         tag = get_object_or_404(Tag, pk=self.kwargs.get('pk'))
         return super().get_queryset().filter(tags=tag)
+
+
+def search(request):
+    q = request.GET.get('q')
+    error_msg = ''
+
+    if not q :
+        error_msg = '请输入关键词'
+        return render(request, 'blog/index.html', context={'error_msg': error_msg})
+
+    post_list = Post.objects.filter(Q(title__icontains=q)|Q(body__icontains=q))
+    return render(request, 'blog/index.html', context={'post_list': post_list})
