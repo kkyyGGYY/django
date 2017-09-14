@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
 from django.views.generic import ListView,DetailView
-from .models import Post, Category
+from .models import Post, Category, Tag
 import markdown
 import pygments
 from comments.forms import CommentForm
@@ -222,3 +222,9 @@ class CategoryView(IndexView):
         cate = get_object_or_404(Category, pk=self.kwargs.get('pk'))
         # 下面中的category 是post.category
         return super().get_queryset().filter(category=cate)
+
+
+class TagView(ListView):
+    def get_queryset(self):
+        tag = get_object_or_404(Tag, pk=self.kwargs.get('pk'))
+        return super().get_queryset().filter(tags=tag)
