@@ -135,3 +135,12 @@ STATIC_URL = '/blog/static/'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.163.com'
+EMAIL_PORT = 25
+EMAIL_HOST_USER = 'python7456@163.com'
+EMAIL_HOST_PASSWORD = 'python'
+DEFAULT_FROM_EMAIL = 'python7456@163.com'
