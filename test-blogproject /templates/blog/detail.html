@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block main %}
+<article class="post post-{{ post.pk }}">
+    <header class="entry-header">
+        <h1 class="entry-title">{{ post.title }}</h1>
+        <div class="entry-meta">
+            <span class="post-category"><a href="#">{{ post.category.name }}</a></span>
+            <span class="post-date"><a href="#"><time class="entry-date" datetime="{{ post.created_time }}">{{ post.created_time }}</time></a></span>
+            <span class="post-author"><a href="#">{{ post.author }}</a></span>
+            <span class="comments-link"><a href="{{post.get_absolute_url}}#comment-area">{{post.comment_set.count}} 评论</a></span>
+            <span class="views-count"><a href="#">{{post.views}} 阅读</a></span>
+        </div>
+    </header>
+    <div class="entry-content clearfix">
+        {{ post.body|safe }}
+        <div class="widget-tag-cloud">
+            <ul>
+                <h3>标签</h3>
+                {% for tag in post.tags.all %}
+                <li>
+                    <a href="{% url 'blog:tag' tag.pk %}">{{tag.name}}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</article>
+
+<section class="comment-area" id="comment-area">
+    <hr>
+    <h3>发表评论</h3>
+    <form action="{% url 'comment:comments' post.pk %}" method="post" class="comment-form">
+        {% csrf_token %}
+        {# cross site request forgery #}
+        <div class="row">
+            <div class="col-md-4">
+                <label for="{{form.name.id_for_label}}">名字：</label>
+                <!--<input type="text" id="id_name" name="name" required>-->
+                {{form.name}}
+                {{form.name.error}}
+            </div>
+            <div class="col-md-4">
+                <label for="{{form.email.id_for_label}}">邮箱：</label>
+                <!--<input type="email" id="id_email" name="email" required>-->
+                {{form.email}}
+                {{form.email.error}}
+            </div>
+            <div class="col-md-4">
+                <label for="{{form.url.id_for_label}}">网址：</label>
+                <!--<input type="text" id="id_url" name="url">-->
+                {{form.url}}
+                {{form.url.error}}
+            </div>
+            <div class="col-md-12">
+                <label for="{{form.text.id_for_label}}">评论：</label>
+                <!--<textarea name="comment" id="id_comment" required></textarea>-->
+                {{form.text}}
+                {{form.text.error}}
+                <button type="submit" class="comment-btn">发表</button>
+            </div>
+        </div>
+    </form>
+    <div class="comment-list-panel">
+        <h3>评论列表，共 <span>{{post.comment_set.count}}</span> 条评论</h3>
+        <ul class="comment-list list-unstyled">
+            {% for comment in comment_list %}
+            <li class="comment-item">
+                <span class="nickname">{{comment.name}}</span>
+                <time class="submit-date" datetime="2012-11-09T23:15:57+00:00">{{comment.created_time}}</time>
+                <div class="text">
+                    {{comment.text}}
+                </div>
+            </li>
+            {% empty %}
+            无评论
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+{% endblock main %}
+
+{% block toc %}
+<div class="widget widget-content">
+<h3 class="widget-title">文章目录</h3>
+{{ post.toc|safe }}
+</div>
+{% endblock toc %}
