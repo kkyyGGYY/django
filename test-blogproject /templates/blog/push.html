@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+<section class="comment-area" id="comment-area">
+    <hr>
+    <h3>发表bolg</h3>
+    <form class="form" action="#" method="post">
+        {% csrf_token %}
+        <input type="hidden"  name="user" value="{{user.pk}}">
+        <h3>{{user.username}}</h3>
+        {% for field in form %}
+        <div>
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.errors }}
+        </div>
+        <div name="create_time"></div>
+        {% if field.help_text %}
+        <p class="help text-small text-muted">
+            {{ field.help_text | safe }}
+        </p>
+        {% endif %}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary btn-block">发表</button>
+    </form>
+
+</section>
+{% endblock main %}
