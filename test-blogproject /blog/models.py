@@ -23,8 +23,8 @@ class Tag(models.Model):
 class Post(models.Model):
     title = models.CharField(max_length=64)
     body = models.TextField()
-    created_time = models.DateTimeField()
-    modified_time = models.DateTimeField()
+    created_time = models.DateTimeField(auto_now_add=True)
+    modified_time = models.DateTimeField(auto_now_add=True)
     # 摘要
     excerpt = models.CharField(max_length=256, blank=True)
     # 关系

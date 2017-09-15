@@ -282,7 +282,10 @@ def pushhtml(request):
 #             }
 #             return render(request, 'blog/detail.html', conetext=conetext)
 #     return redirect(post)
+
 from datetime import datetime
+
+
 def push(request):
 
     if request.method == 'POST':
@@ -300,9 +303,11 @@ def push(request):
             # post.author = author
             post.created_time = created_time
             post.modified_time = modified_time
+            form.save_m2m()
             post.save()
             return redirect('/')
 
     else:
         form = PostForm()
     return render(request, 'blog/push.html', context={'form': form})
+
